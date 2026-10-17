@@ -1,0 +1,28 @@
+# Dependencies / package managers
+node_modules/
+.pnpm-store/
+.npm/
+
+# Build / packaging artefacts
+dist/
+build/
+*.tgz
+*.pack
+
+# Logs & local editor noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local secrets / env — never commit
+.env
+.env.local
+*.key
+
+# Local knowledge-base data if someone points a test at a real folder
+knowledge-base/
+.dsh/

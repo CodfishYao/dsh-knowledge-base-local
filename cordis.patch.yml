@@ -1,0 +1,17 @@
+# dsh-knowledge-base-local — Host plugin registration for DeepSeek Harness.
+#
+# This patch inserts one Host plugin row into the active profile. All mutable
+# settings live in the per-user data directory (default `~/.dsh`), under
+#   <DSH_HOME>/knowledge-base/settings.json
+# and are independent of the current workspace, so they survive project switches.
+# Non-empty values below override the settings file (deployment-level wins).
+#
+#   - insert:
+#       - id: dsh-knowledge-base-local
+#         name: 'dsh-knowledge-base-local'
+#         config:
+#           rootDir: '/path/to/your/knowledge-base'
+- insert:
+    - id: dsh-knowledge-base-local
+      name: 'dsh-knowledge-base-local'
+      config: {}
