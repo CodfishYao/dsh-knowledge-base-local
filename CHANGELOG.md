@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-10-18
+
+### Fixed
+- Support DashScope embedding API format (qwen-text-embedding models). Auto-detects based on endpoint URL or model name, sends correct request format (input.contents instead of input array), and parses DashScope response format.
+
+
 ## [1.2.0] - 2026-10-17
 
 ### Added
@@ -24,7 +30,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Added
 - PDF / Office body extraction (`.pdf`, `.docx`, `.xlsx`, `.pptx`), zero dependencies, attached-original kept and extraction status recorded.
 - MCP server for external clients over stdio and Streamable HTTP; tools mirror the agent side exactly, with token-driven RBAC.
-- At-rest encryption (AES-256-GCM per document; scrypt-wrapped data key) and role-based multi-user access (`owner/admin/editor/reader`) with per-collection grants and API tokens â€” both **off by default**.
+- At-rest encryption (AES-256-GCM per document; scrypt-wrapped data key) and role-based multi-user access (`owner/admin/editor/reader`) with per-collection grants and API tokens â€?both **off by default**.
 - Browser upload and folder-import routes for the panel.
 
 ## [1.0.0]

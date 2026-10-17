@@ -126,10 +126,30 @@ export async function embedWithApi(texts, settings, signal) {
   const batchSize = Math.min(128, Math.max(1, Number(conf.batchSize) || 32))
   const vectors = []
   let dim = 0
+
+  // Auto-detect DashScope format based on endpoint or model name
+  const isDashScope = /dashscope/i.test(endpoint) || /qwen|text-embedding/i.test(model)
+
   for (let offset = 0; offset < texts.length; offset += batchSize) {
     const batch = texts.slice(offset, offset + batchSize)
-    const payload = { model, input: batch }
-    if (Number(conf.dimensions) > 0) payload.dimensions = Number(conf.dimensions)
+    let payload
+    if (isDashScope) {
+      // DashScope native format
+      payload = {
+        model,
+        input: {
+          contents: batch.map((text) => ({ text })),
+        },
+        parameters: {
+          text_type: 'document',
+        },
+      }
+      if (Number(conf.dimensions) > 0) payload.parameters.dimension = Number(conf.dimensions)
+    } else {
+      // OpenAI-compatible format
+      payload = { model, input: batch }
+      if (Number(conf.dimensions) > 0) payload.dimensions = Number(conf.dimensions)
+    }
     const headers = { 'content-type': 'application/json' }
     if (apiKey) headers.authorization = `Bearer ${apiKey}`
     const response = await fetch(url, {
@@ -143,7 +163,24 @@ export async function embedWithApi(texts, settings, signal) {
       throw new Error(`embeddings endpoint returned HTTP ${response.status}: ${detail}`)
     }
     const json = await response.json()
-    const data = Array.isArray(json?.data) ? [...json.data].sort((a, b) => (a.index ?? 0) - (b.index ?? 0)) : null
+
+    // Parse response based on format
+    let data
+    if (isDashScope && json.output?.embeddings) {
+      // DashScope response format
+      data = json.output.embeddings
+        .map((item) => ({
+          embedding: item.embedding,
+          index: item.text_index ?? 0,
+        }))
+        .sort((a, b) => a.index - b.index)
+    } else if (Array.isArray(json?.data)) {
+      // OpenAI response format
+      data = [...json.data].sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+    } else {
+      throw new Error('embeddings endpoint returned an unexpected payload')
+    }
+
     if (!data || data.length !== batch.length) throw new Error('embeddings endpoint returned an unexpected payload')
     for (const item of data) {
       const values = item?.embedding

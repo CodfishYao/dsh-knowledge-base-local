@@ -188,6 +188,40 @@ async function main() {
     await new Promise((resolve) => mockServer.close(resolve))
   }
 
+  // ---- DashScope format test ----
+  const dashScopeServer = createServer((req, res) => {
+    let body = ''
+    req.on('data', (chunk) => (body += chunk))
+    req.on('end', () => {
+      const json = JSON.parse(body)
+      // Verify DashScope format
+      assert.ok(json.input?.contents, 'DashScope format should have input.contents')
+      assert.ok(Array.isArray(json.input.contents), 'input.contents should be array')
+      assert.ok(json.input.contents[0]?.text !== undefined, 'contents should have text field')
+      assert.equal(json.parameters?.text_type, 'document', 'should have text_type parameter')
+
+      // Return DashScope format response
+      const data = json.input.contents.map((item, index) => ({
+        embedding: Array(8).fill(0).map((_, i) => Math.random()),
+        text_index: index,
+      }))
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ output: { embeddings: data }, usage: { total_tokens: 10 } }))
+    })
+  })
+  await new Promise((resolve) => dashScopeServer.listen(0, '127.0.0.1', resolve))
+  try {
+    const endpoint = `http://127.0.0.1:${dashScopeServer.address().port}/api/v1`
+    const apiSettings = normalizeSettings({ ...settings, embedding: { endpoint, model: 'qwen3.7-text-embedding-flash', apiKey: '' } })
+    const embedded = await embedWithApi(['测试文本', 'another text'], apiSettings)
+    assert.equal(embedded.dim, 8)
+    assert.equal(embedded.vectors.length, 2)
+    const norm = Math.sqrt([...embedded.vectors[0]].reduce((sum, value) => sum + value * value, 0))
+    assert.ok(Math.abs(norm - 1) < 1e-5)
+  } finally {
+    await new Promise((resolve) => dashScopeServer.close(resolve))
+  }
+
   await rm(home, { recursive: true, force: true })
   console.log('smoke: ok')
 }
