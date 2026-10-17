@@ -1,4 +1,4 @@
-# ![](icon.svg?width=100)dsh-knowledge-base-local
+# dsh-knowledge-base-local
 
 [简体中文](README.zh.md) | English
 

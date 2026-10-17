@@ -1,4 +1,4 @@
-# ![](icon.svg?width=100) dsh-knowledge-base-local
+# dsh-knowledge-base-local
 
 简体中文 | [English](README.md)
 
@@ -16,7 +16,7 @@
 
 ## 目录
 
-- [ dsh-knowledge-base-local](#-dsh-knowledge-base-local)
+- [dsh-knowledge-base-local](#dsh-knowledge-base-local)
   - [目录](#目录)
   - [安装](#安装)
   - [快速开始](#快速开始)
