@@ -126,11 +126,24 @@ export async function embedWithApi(texts, settings, signal) {
   const vectors = []
   let dim = 0
 
-  // Auto-detect DashScope native API based on endpoint or model name
-  const isDashScope = /dashscope\.aliyuncs\.com/i.test(endpoint) || 
-                      /text-embedding/i.test(model) ||
-                      /\/api\/v1$/i.test(endpoint)
-  const url = isDashScope 
+  /**
+   * Wire format selection.
+   *
+   * An explicit `embedding.format` always wins. Otherwise only the native
+   * DashScope route (`dashscope.aliyuncs.com/api/v1`, which serves
+   * `/services/embeddings/text-embedding/text-embedding` with `input.texts`)
+   * gets the non-OpenAI shape. Every `/compatible-mode` endpoint — including
+   * third-party gateways that proxy Qwen models — speaks the OpenAI shape, so
+   * model names alone must not trigger the native format.
+   */
+  const configuredFormat = String(conf.format ?? '').trim().toLowerCase()
+  const isDashScope =
+    configuredFormat === 'dashscope'
+      ? true
+      : configuredFormat === 'openai'
+        ? false
+        : /dashscope\.aliyuncs\.com\/api\/v1/i.test(endpoint) && !/compatible-mode/i.test(endpoint)
+  const url = isDashScope
     ? `${endpoint}/services/embeddings/text-embedding/text-embedding`
     : (/\/embeddings$/i.test(endpoint) ? endpoint : `${endpoint}/embeddings`)
 

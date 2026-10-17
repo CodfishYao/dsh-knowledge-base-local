@@ -188,22 +188,19 @@ async function main() {
     await new Promise((resolve) => mockServer.close(resolve))
   }
 
-  // ---- DashScope format test ----
+  // ---- DashScope native format (explicit, since a local mock has no dashscope host) ----
   const dashScopeServer = createServer((req, res) => {
     let body = ''
     req.on('data', (chunk) => (body += chunk))
     req.on('end', () => {
       const json = JSON.parse(body)
-      // Verify DashScope native format (input.texts, not input.contents)
       assert.ok(json.input?.texts, 'DashScope format should have input.texts')
       assert.ok(Array.isArray(json.input.texts), 'input.texts should be array')
       assert.equal(json.parameters?.text_type, 'document', 'should have text_type parameter')
-      // Verify correct URL path
       assert.ok(req.url.includes('/services/embeddings/text-embedding/text-embedding'), 'should use DashScope native path')
 
-      // Return DashScope format response
       const data = json.input.texts.map((text, index) => ({
-        embedding: Array(8).fill(0).map((_, i) => Math.random()),
+        embedding: Array(8).fill(0).map(() => Math.random()),
         text_index: index,
       }))
       res.writeHead(200, { 'content-type': 'application/json' })
@@ -213,7 +210,11 @@ async function main() {
   await new Promise((resolve) => dashScopeServer.listen(0, '127.0.0.1', resolve))
   try {
     const endpoint = `http://127.0.0.1:${dashScopeServer.address().port}/api/v1`
-    const apiSettings = normalizeSettings({ ...settings, embedding: { endpoint, model: 'text-embedding-v3', apiKey: '' } })
+    const apiSettings = normalizeSettings({
+      ...settings,
+      embedding: { endpoint, model: 'text-embedding-v3', apiKey: '', format: 'dashscope' },
+    })
+    assert.equal(apiSettings.embedding.format, 'dashscope', 'format 应被规范化保留')
     const embedded = await embedWithApi(['测试文本', 'another text'], apiSettings)
     assert.equal(embedded.dim, 8)
     assert.equal(embedded.vectors.length, 2)
@@ -221,6 +222,36 @@ async function main() {
     assert.ok(Math.abs(norm - 1) < 1e-5)
   } finally {
     await new Promise((resolve) => dashScopeServer.close(resolve))
+  }
+
+  // ---- compatible-mode gateway must keep the OpenAI shape ----
+  // Regression: a Qwen embedding model behind a `/compatible-mode/v1` gateway is
+  // NOT the native DashScope route; forcing the native shape there yields 404.
+  const compatServer = createServer((req, res) => {
+    let body = ''
+    req.on('data', (chunk) => (body += chunk))
+    req.on('end', () => {
+      const json = JSON.parse(body)
+      assert.equal(req.url, '/compatible-mode/v1/embeddings', 'compatible-mode 应走 /embeddings')
+      assert.ok(Array.isArray(json.input), 'compatible-mode 应发送 OpenAI 的 input 数组')
+      assert.equal(json.input?.texts, undefined, '不应发送 DashScope 的 input.texts')
+      const data = json.input.map((text, index) => ({ embedding: Array(8).fill(0).map(() => Math.random()), index }))
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ data, model: json.model, usage: { total_tokens: 10 } }))
+    })
+  })
+  await new Promise((resolve) => compatServer.listen(0, '127.0.0.1', resolve))
+  try {
+    const endpoint = `http://127.0.0.1:${compatServer.address().port}/compatible-mode/v1`
+    const apiSettings = normalizeSettings({
+      ...settings,
+      embedding: { endpoint, model: 'qwen3.7-text-embedding-flash', apiKey: '' },
+    })
+    const embedded = await embedWithApi(['中文文本', 'english text'], apiSettings)
+    assert.equal(embedded.dim, 8)
+    assert.equal(embedded.vectors.length, 2)
+  } finally {
+    await new Promise((resolve) => compatServer.close(resolve))
   }
 
   await rm(home, { recursive: true, force: true })

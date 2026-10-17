@@ -33,6 +33,8 @@ export const DEFAULT_SETTINGS = {
     endpoint: '',
     model: '',
     apiKey: '',
+    /** Wire format: '' = infer from the endpoint, 'openai' or 'dashscope' to force it. */
+    format: '',
     dimensions: 0,
     batchSize: 32,
     timeoutMs: 60000,
@@ -121,6 +123,9 @@ export function normalizeSettings(raw) {
   merged.search.vectorWeight = Math.min(1, Math.max(0, Number(merged.search.vectorWeight) ?? 0.55))
   merged.search.lexicalWeight = Math.min(1, Math.max(0, Number(merged.search.lexicalWeight) ?? 0.45))
   merged.rootDir = String(merged.rootDir ?? '').trim()
+  const embedding = (merged.embedding = merged.embedding ?? {})
+  const embeddingFormat = String(embedding.format ?? '').trim().toLowerCase()
+  embedding.format = ['openai', 'dashscope'].includes(embeddingFormat) ? embeddingFormat : ''
   const security = (merged.security = merged.security ?? {})
   security.metadata = security.metadata === 'encrypted' ? 'encrypted' : 'plain'
   security.autoUnlockEnv = security.autoUnlockEnv !== false
