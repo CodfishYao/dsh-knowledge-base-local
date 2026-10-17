@@ -119,7 +119,6 @@ export async function embedWithApi(texts, settings, signal) {
   const conf = settings.embedding
   const endpoint = String(conf.endpoint ?? '').trim().replace(/\/+$/, '')
   if (endpoint === '') throw new Error('embedding.endpoint is empty')
-  const url = /\/embeddings$/i.test(endpoint) ? endpoint : `${endpoint}/embeddings`
   const model = String(conf.model ?? '').trim()
   if (model === '') throw new Error('embedding.model is empty')
   const apiKey = conf.apiKey || process.env.DSH_KB_EMBEDDING_API_KEY || ''
@@ -127,8 +126,13 @@ export async function embedWithApi(texts, settings, signal) {
   const vectors = []
   let dim = 0
 
-  // Auto-detect DashScope format based on endpoint or model name
-  const isDashScope = /dashscope/i.test(endpoint) || /qwen|text-embedding/i.test(model)
+  // Auto-detect DashScope native API based on endpoint or model name
+  const isDashScope = /dashscope\.aliyuncs\.com/i.test(endpoint) || 
+                      /text-embedding/i.test(model) ||
+                      /\/api\/v1$/i.test(endpoint)
+  const url = isDashScope 
+    ? `${endpoint}/services/embeddings/text-embedding/text-embedding`
+    : (/\/embeddings$/i.test(endpoint) ? endpoint : `${endpoint}/embeddings`)
 
   for (let offset = 0; offset < texts.length; offset += batchSize) {
     const batch = texts.slice(offset, offset + batchSize)
@@ -138,7 +142,7 @@ export async function embedWithApi(texts, settings, signal) {
       payload = {
         model,
         input: {
-          contents: batch.map((text) => ({ text })),
+          texts: batch,
         },
         parameters: {
           text_type: 'document',

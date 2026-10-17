@@ -1,6 +1,6 @@
 {
   "name": "dsh-knowledge-base-local",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "description": "A local, model-readable knowledge-base plugin for DeepSeek Harness (DSH): Markdown-first storage, six agent tools, a CLI, a Web settings panel, PDF/Office text extraction, an MCP server for external clients, at-rest AES-256-GCM encryption and role-based multi-user access.",
   "author": "dsh-knowledge-base-local contributors",

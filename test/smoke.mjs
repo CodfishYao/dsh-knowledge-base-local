@@ -194,14 +194,15 @@ async function main() {
     req.on('data', (chunk) => (body += chunk))
     req.on('end', () => {
       const json = JSON.parse(body)
-      // Verify DashScope format
-      assert.ok(json.input?.contents, 'DashScope format should have input.contents')
-      assert.ok(Array.isArray(json.input.contents), 'input.contents should be array')
-      assert.ok(json.input.contents[0]?.text !== undefined, 'contents should have text field')
+      // Verify DashScope native format (input.texts, not input.contents)
+      assert.ok(json.input?.texts, 'DashScope format should have input.texts')
+      assert.ok(Array.isArray(json.input.texts), 'input.texts should be array')
       assert.equal(json.parameters?.text_type, 'document', 'should have text_type parameter')
+      // Verify correct URL path
+      assert.ok(req.url.includes('/services/embeddings/text-embedding/text-embedding'), 'should use DashScope native path')
 
       // Return DashScope format response
-      const data = json.input.contents.map((item, index) => ({
+      const data = json.input.texts.map((text, index) => ({
         embedding: Array(8).fill(0).map((_, i) => Math.random()),
         text_index: index,
       }))
@@ -212,7 +213,7 @@ async function main() {
   await new Promise((resolve) => dashScopeServer.listen(0, '127.0.0.1', resolve))
   try {
     const endpoint = `http://127.0.0.1:${dashScopeServer.address().port}/api/v1`
-    const apiSettings = normalizeSettings({ ...settings, embedding: { endpoint, model: 'qwen3.7-text-embedding-flash', apiKey: '' } })
+    const apiSettings = normalizeSettings({ ...settings, embedding: { endpoint, model: 'text-embedding-v3', apiKey: '' } })
     const embedded = await embedWithApi(['测试文本', 'another text'], apiSettings)
     assert.equal(embedded.dim, 8)
     assert.equal(embedded.vectors.length, 2)

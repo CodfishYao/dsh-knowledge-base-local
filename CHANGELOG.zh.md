@@ -7,10 +7,17 @@
 
 ## [未发布]
 
+## [1.2.2] - 2026-10-18
+
+### 修复
+- DashScope 原生 embedding API：改为发送 `input.texts`（而非 `input.contents`），并请求真实路由 `/api/v1/services/embeddings/text-embedding/text-embedding`——这才是 `text-embedding-*` 系列模型接受的形状。此前每次调用都会失败并报 `InvalidParameter: Field required: input.contents`。
+- 检测不再只看域名：endpoint 位于 `/api/v1` 下、或模型名含 `text-embedding` 即按 DashScope 处理；OpenAI 兼容端点仍走 `{"input": [...]}`。
+- `bin` 改为 npm 接受的写法（`kb.mjs`），发布时 `dsh-kb` 命令不再被自动移除。
+
 ## [1.2.1] - 2026-10-18
 
 ### 修复
-- 支持 DashScope embedding API 格式（qwen-text-embedding 系列模型）。根据 endpoint URL 或模型名自动检测，发送正确的请求格式（`input.contents` 而非 `input` 数组），并解析 DashScope 响应格式。
+- DashScope embedding 支持的首次尝试（请求/响应形状）；由 1.2.2 取代——该版本修正了字段名与端点路径。
 
 ## [1.2.0] - 2026-10-17
 
@@ -39,7 +46,8 @@
 ### 新增
 - Markdown 为源的本地库、六件 Agent 工具、独立 CLI、Web 设置面板、BM25 + 向量混合检索、三档向量模式、集合、标签、回收站、版本、inbox 监听与 URL 导入。
 
-[未发布]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.1...HEAD
+[未发布]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.2
 [1.2.1]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.1
 [1.2.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.0
 [1.1.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.1.0
