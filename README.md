@@ -1,4 +1,4 @@
-# dsh-knowledge-base-local
+# ![](icon.svg?width=100)dsh-knowledge-base-local
 
 [简体中文](README.zh.md) | English
 
@@ -16,24 +16,27 @@ Three design goals:
 
 ## Contents
 
-- [Install](#install)
-- [Quick start](#quick-start)
-- [Features](#features)
-- [Agent tools](#agent-tools)
-- [CLI](#cli)
-- [PDF / Office extraction](#pdf--office-extraction)
-- [MCP server](#mcp-server)
-- [Encryption & multi-user](#encryption--multi-user)
-- [Bulk & full delete](#bulk--full-delete)
-- [Web panel](#web-panel)
-- [Storage layout](#storage-layout)
-- [Configuration](#configuration)
-- [Vector modes](#vector-modes)
-- [Retrieval scoring](#retrieval-scoring)
-- [Security model](#security-model)
-- [Known limitations](#known-limitations)
-- [Development & tests](#development--tests)
-- [Uninstall](#uninstall)
+- [dsh-knowledge-base-local](#dsh-knowledge-base-local)
+  - [Contents](#contents)
+  - [Install](#install)
+  - [Quick start](#quick-start)
+  - [Features](#features)
+  - [Agent tools](#agent-tools)
+  - [CLI](#cli)
+  - [PDF / Office extraction](#pdf--office-extraction)
+  - [MCP server](#mcp-server)
+  - [Encryption \& multi-user](#encryption--multi-user)
+  - [Bulk \& full delete](#bulk--full-delete)
+  - [Web panel](#web-panel)
+  - [Storage layout](#storage-layout)
+  - [Configuration](#configuration)
+  - [Vector modes](#vector-modes)
+  - [Retrieval scoring](#retrieval-scoring)
+  - [Security model](#security-model)
+  - [Known limitations](#known-limitations)
+  - [Development \& tests](#development--tests)
+  - [Uninstall](#uninstall)
+  - [License](#license)
 
 ---
 
