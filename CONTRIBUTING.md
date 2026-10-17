@@ -1,6 +1,6 @@
 # Contributing
 
-简体中文 | [English](CONTRIBUTING.md)
+[简体中文](CONTRIBUTING.zh.md) | English
 
 Thanks for your interest in improving **dsh-knowledge-base-local**! This guide
 covers how to build, test and send changes.
