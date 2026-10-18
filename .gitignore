@@ -4,6 +4,7 @@ node_modules/
 .npm/
 
 # Build / packaging artefacts
+lib/
 dist/
 build/
 *.tgz

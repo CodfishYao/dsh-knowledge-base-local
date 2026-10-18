@@ -1,6 +1,6 @@
 {
   "name": "dsh-knowledge-base-local",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "type": "module",
   "description": "A local, model-readable knowledge-base plugin for DeepSeek Harness (DSH): Markdown-first storage, six agent tools, a CLI, a Web settings panel, PDF/Office text extraction, an MCP server for external clients, at-rest AES-256-GCM encryption and role-based multi-user access.",
   "author": "dsh-knowledge-base-local contributors",
@@ -28,44 +28,30 @@
     "agent-tool"
   ],
   "exports": {
-    ".": "./index.js",
-    "./client": "./client.js",
-    "./kb": "./kb.mjs",
-    "./mcp": "./src/mcp.js",
-    "./mcp/http": "./src/mcp_http.js",
-    "./mcp/stdio": "./mcp-stdio.mjs",
-    "./extract": "./src/extract_binary.js",
-    "./locale/*.json": "./locale/*.json",
-    "./icon": "./icon.svg",
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./kb": "./lib/kb.mjs",
+    "./mcp": "./lib/src/mcp.js",
+    "./mcp/http": "./lib/src/mcp_http.js",
+    "./mcp/stdio": "./lib/mcp-stdio.mjs",
+    "./extract": "./lib/src/extract_binary.js",
+    "./locale/*.json": "./lib/locale/*.json",
+    "./icon": "./lib/icon.svg",
     "./package.json": "./package.json"
   },
   "bin": {
-    "dsh-kb": "kb.mjs"
+    "dsh-kb": "lib/kb.mjs"
   },
   "files": [
-    "index.js",
-    "client.js",
-    "kb.mjs",
-    "mcp-stdio.mjs",
-    "cordis.patch.yml",
-    "icon.svg",
-    "LICENSE",
-    "README.md",
-    "README.zh.md",
-    "CONTRIBUTING.md",
-    "CONTRIBUTING.zh.md",
-    "CHANGELOG.md",
-    "CHANGELOG.zh.md",
-    "SECURITY.md",
-    "SECURITY.zh.md",
-    "locale/",
-    "src/",
-    "test/"
+    "lib/",
+    "package.json",
+    "cordis.patch.yml"
   ],
   "scripts": {
+    "build": "node scripts/build.js",
     "test": "node test/smoke.mjs && node test/extract.test.mjs && node test/integration.test.mjs && node test/panel_api.test.mjs && node test/danger_ops.test.mjs && node test/host_mcp_mount.test.mjs && node test/mcp.test.mjs",
     "lint:css": "node tools/audit-css.mjs client.js",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm run build && npm test"
   },
   "engines": {
     "node": ">=22"
