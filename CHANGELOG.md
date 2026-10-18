@@ -7,46 +7,56 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-10-18
+
+### Fixed
+- PDF parser correctly extracts content from ObjStm-compressed objects in PDF 1.5+ files (index offset and whitespace handling).
+- Embedding API calls now retry with exponential backoff on HTTP 429/5xx responses (up to 3 attempts with `Retry-After` header support).
+
+### Changed
+- Default `embedding.batchSize` reduced from 32 to 10 for DashScope API compatibility (gateway limit is 20).
+
 ## [1.2.2] - 2026-10-18
 
 ### Fixed
-- DashScope native embedding API: send `input.texts` (not `input.contents`) and call the real route `/api/v1/services/embeddings/text-embedding/text-embedding`, which is what `text-embedding-*` models accept. The previous shape made every call fail with `InvalidParameter: Field required: input.contents`.
-- Detection no longer depends on the hostname alone: an endpoint under `/api/v1` or a model name containing `text-embedding` is treated as DashScope, while OpenAI-compatible endpoints keep the `{"input": [...]}` shape.
-- `bin` entry rewritten to the form npm accepts (`kb.mjs`), so `dsh-kb` survives publishing instead of being auto-removed.
+- DashScope native embedding API: correct request format (`input.texts` instead of `input.contents`) and endpoint path (`/api/v1/services/embeddings/text-embedding/text-embedding`).
+- Embedding format detection: endpoints under `/api/v1` or models containing `text-embedding` are treated as DashScope; OpenAI-compatible endpoints retain `{"input": [...]}` format.
+- `bin` entry rewritten to npm-accepted format (`kb.mjs`) to prevent auto-removal during publishing.
 
 ## [1.2.1] - 2026-10-18
 
 ### Fixed
-- First attempt at DashScope embedding support (request/response shape); superseded by 1.2.2, which corrects the field name and the endpoint path.
+- Initial DashScope embedding support (request/response shape). Superseded by 1.2.2 with corrected field names and endpoint paths.
 
 ## [1.2.0] - 2026-10-17
 
 ### Added
-- Bulk delete (`bulkRemove`), empty-trash (`emptyTrash`) and full wipe (`wipe`), all permission-gated (delete floor + per-collection + ownership for bulk; `security`/owner + a typed `WIPE` confirmation for wipe) and refused while the library is locked.
-- A **Danger zone** in the panel Documents tab; matching `kb_manage` actions, `/kb-api` routes and `kb.mjs` commands.
-- `dsh-kb` CLI bin and `prepublishOnly` test gate; CSS token/lint helper.
+- Bulk delete (`bulkRemove`), empty-trash (`emptyTrash`), and full wipe (`wipe`) operations with permission controls: bulk operations require delete permission plus collection scope and ownership; wipe requires security (owner) role and typed `WIPE` confirmation. All operations are refused when the library is locked.
+- **Danger zone** section in the panel Documents tab, corresponding `kb_manage` actions, `/kb-api` routes, and `kb.mjs` commands.
+- `dsh-kb` CLI binary and `prepublishOnly` test gate.
 - Bilingual documentation (`README.md` / `README.zh.md`), `SECURITY.md` / `SECURITY.zh.md`, `CONTRIBUTING.md` / `CONTRIBUTING.zh.md`, this changelog, `LICENSE`, `.gitignore`.
 
 ### Changed
-- Package renamed to `dsh-knowledge-base-local` (was the private `@local/dsh-knowledge-base`); plugin id, loader id and locale namespace follow.
-- Panel rewritten as a flat, theme-token-driven settings form (segmented control, hairline field rows, elevation-based surfaces) so light and dark both follow the shell palette; no literal colours.
-- Language now tracks the shell's active locale (`LocaleSnapshot.active`), not the browser language; the panel re-renders on locale change.
-- Examples and docs no longer reference private absolute paths; the settings path is documented portably as `~/.dsh/...`.
+- Package renamed to `dsh-knowledge-base-local` (formerly private `@local/dsh-knowledge-base`); plugin id, loader id, and i18n namespace synchronized.
+- Panel UI rewritten as a flat, theme-token-driven settings form (segmented control, hairline field rows, elevation-based surfaces) following shell palette; no literal colors.
+- Locale tracking now follows shell's active locale (`LocaleSnapshot.active`) instead of browser language; panel re-renders on locale change.
+- Documentation and examples no longer reference private absolute paths; settings path documented portably as `~/.dsh/...`.
 
 ## [1.1.0] - 2026-10-17
 
 ### Added
-- PDF / Office body extraction (`.pdf`, `.docx`, `.xlsx`, `.pptx`), zero dependencies, attached-original kept and extraction status recorded.
-- MCP server for external clients over stdio and Streamable HTTP; tools mirror the agent side exactly, with token-driven RBAC.
-- At-rest encryption (AES-256-GCM per document; scrypt-wrapped data key) and role-based multi-user access (`owner/admin/editor/reader`) with per-collection grants and API tokens — both **off by default**.
+- PDF / Office body extraction (`.pdf`, `.docx`, `.xlsx`, `.pptx`) with zero dependencies; original attachments retained and extraction status recorded.
+- MCP server for external clients over stdio and Streamable HTTP; tools mirror agent-side implementation exactly with token-driven RBAC.
+- At-rest encryption (AES-256-GCM per document; scrypt-wrapped data key) and role-based multi-user access (`owner/admin/editor/reader`) with per-collection grants and API tokens. Both features **disabled by default**.
 - Browser upload and folder-import routes for the panel.
 
 ## [1.0.0]
 
 ### Added
-- Markdown-first local store, six agent tools, standalone CLI, Web settings panel, hybrid BM25 + vector retrieval, three vector modes, collections, tags, trash, versions, inbox watcher and URL import.
+- Markdown-first local store, six agent tools, standalone CLI, Web settings panel, hybrid BM25 + vector retrieval, three vector modes, collections, tags, trash, versions, inbox watcher, and URL import.
 
-[Unreleased]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.3
 [1.2.2]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.2
 [1.2.1]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.1
 [1.2.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.0
