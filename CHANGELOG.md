@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 简体中文 | [English](CHANGELOG.zh.md)
 
+## [1.2.5] - 2026-10-18
+
+### Added
+- Now can publish the package to Github.
+  
 ## [1.2.4] - 2026-10-18
 
 ### Changed
