@@ -25,7 +25,7 @@ window.__ModuleLoader__.load({
     const NS = 'dsh-knowledge-base-local'
     const STYLE_ID = 'kb-panel-styles'
     /** Bumped on every visual revision so the running build is identifiable. */
-    const PANEL_BUILD = 'b11 · renamed+scrubbed'
+    const PANEL_BUILD = 'v1.2.4 · 2026-10-18'
 
     const DICT = {
       zh: {
