@@ -67,6 +67,6 @@
     }
   },
   "publishConfig": {
-  "@CodfishYao:registry": "https://npm.pkg.github.com"
+  "@CodfishYao:registry": "https://npm.pkg.github.com/"
   }
 }

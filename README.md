@@ -44,19 +44,9 @@ Three design goals:
 
 Requires Node.js ≥ 22 and a running DeepSeek Harness.
 
-**From npm** (recommended):
-
 ```
-plugin_manager install_bundle dsh-knowledge-base-local
+dsh plugin --profile web add dsh-knowledge-base-local
 ```
-
-**From a local checkout** (or a built tarball):
-
-```
-plugin_manager install_bundle /absolute/path/to/dsh-knowledge-base-local
-```
-
-`install_bundle` reads `cordis.patch.yml` from the package and inserts one Host plugin row into the active profile. No native build step.
 
 ## Quick start
 

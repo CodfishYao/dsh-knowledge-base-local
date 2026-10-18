@@ -44,19 +44,9 @@
 
 需要 Node.js ≥ 22 与运行中的 DeepSeek Harness。
 
-**从 npm 安装**（推荐）：
-
 ```
-plugin_manager install_bundle dsh-knowledge-base-local
+dsh plugin --profile web add dsh-knowledge-base-local
 ```
-
-**从本地目录安装**（或已打好的 tarball）：
-
-```
-plugin_manager install_bundle /absolute/path/to/dsh-knowledge-base-local
-```
-
-`install_bundle` 会读取包内的 `cordis.patch.yml`，向当前 profile 插入一行 Host 插件。没有原生编译步骤。
 
 ## 快速开始
 
