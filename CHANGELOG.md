@@ -3,7 +3,7 @@
 All notable changes to **dsh-knowledge-base-local** are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-简体中文 | [English](CHANGELOG.zh.md)
+[简体中文](CHANGELOG.zh.md) | English
 
 ## [1.2.5](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.5) - 2026-10-18
 
