@@ -307,7 +307,7 @@ npm run lint:css  # 静态检查面板 CSS 只用真实主题令牌、无字面�
 ## 卸载
 
 ```
-plugin_manager remove_bundle dsh-knowledge-base-local
+dsh plugin --profile web remove dsh-knowledge-base-local
 ```
 
 你的知识库目录与 `<DSH_HOME>/knowledge-base/settings.json` 不会被删除，需要的话自行清理。

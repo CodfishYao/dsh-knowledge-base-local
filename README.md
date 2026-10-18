@@ -307,7 +307,7 @@ Every test runs against a throwaway temp knowledge base and a temp `DSH_HOME`; n
 ## Uninstall
 
 ```
-plugin_manager remove_bundle dsh-knowledge-base-local
+dsh plugin --profile web remove dsh-knowledge-base-local
 ```
 
 Your knowledge-base folder and `<DSH_HOME>/knowledge-base/settings.json` are left in place; remove them manually if you want.
