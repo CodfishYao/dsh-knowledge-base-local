@@ -26,4 +26,4 @@ Thumbs.db
 # Local knowledge-base data if someone points a test at a real folder
 knowledge-base/
 .dsh/
-./dide
+./.dide
