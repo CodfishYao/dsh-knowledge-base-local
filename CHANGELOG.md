@@ -5,7 +5,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 [简体中文](CHANGELOG.zh.md) | English
 
-## [Unreleased]
+
 
 ## [1.2.3] - 2026-10-18
 
@@ -15,6 +15,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 - Default `embedding.batchSize` reduced from 32 to 10 for DashScope API compatibility (gateway limit is 20).
+
+## [Unreleased]
 
 ## [1.2.2] - 2026-10-18
 
@@ -54,6 +56,3 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 - Markdown-first local store, six agent tools, standalone CLI, Web settings panel, hybrid BM25 + vector retrieval, three vector modes, collections, tags, trash, versions, inbox watcher, and URL import.
-
-[1.2.3]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.3
-[1.2.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.0
