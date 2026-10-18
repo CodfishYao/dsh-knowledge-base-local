@@ -67,6 +67,6 @@
     }
   },
   "publishConfig": {
-  "registry": "https://github.com/CodfishYao/dsh-knowledge-base-local.git"
+  "@CodfishYao:registry": "https://npm.pkg.github.com"
   }
 }
