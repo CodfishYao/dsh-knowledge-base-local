@@ -55,10 +55,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Added
 - Markdown-first local store, six agent tools, standalone CLI, Web settings panel, hybrid BM25 + vector retrieval, three vector modes, collections, tags, trash, versions, inbox watcher, and URL import.
 
-[Unreleased]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.3...HEAD
 [1.2.3]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.3
-[1.2.2]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.2
-[1.2.1]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.1
 [1.2.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.0
-[1.1.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.1.0
-[1.0.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.0.0
