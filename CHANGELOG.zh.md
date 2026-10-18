@@ -5,19 +5,19 @@
 
 简体中文 | [English](CHANGELOG.md)
 
-## [1.2.5] - 2026-10-18
+## [1.2.5](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.5) - 2026-10-18
 
-### 新增
-- 现在可以将包发布到Github上了。
+### 修复
+- 修复了一些设置界面中的视觉提示。
   
-## [1.2.4] - 2026-10-18
+## [1.2.4](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.4) - 2026-10-18
 
 ### 变更
 - 新增 Node.js 构建脚本（`scripts/build.js`），将所有分发文件复制到 `lib/`。
 - 更新 package.json 的 `exports`、`bin`、`files` 字段，指向 `lib/` 输出。
 - `.gitignore` 增加 `lib/` 排除规则（生成产物）。
 
-## [1.2.3] - 2026-10-18
+## [1.2.3](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.3) - 2026-10-18
 
 ### 修复
 - PDF 解析器正确提取 ObjStm 压缩对象中的内容（PDF 1.5+，索引偏移与空白处理修正）。

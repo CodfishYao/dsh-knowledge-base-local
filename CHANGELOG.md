@@ -5,19 +5,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 简体中文 | [English](CHANGELOG.zh.md)
 
-## [1.2.5] - 2026-10-18
+## [1.2.5](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.5) - 2026-10-18
 
-### Added
-- Now can publish the package to Github.
+### Fixed
+- Fixed some visual cues in the settings interface.
   
-## [1.2.4] - 2026-10-18
+## [1.2.4](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.4) - 2026-10-18
 
 ### Changed
 - Added Node.js build script (`scripts/build.js`) that copies all distribution files to `lib/`.
 - Updated `exports`, `bin`, and `files` fields in package.json to reference `lib/` output.
 - Added `.gitignore` rule for `lib/` directory (generated artifact).
 
-## [1.2.3] - 2026-10-18
+## [1.2.3](https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/1.2.3) - 2026-10-18
 
 ### Fixed
 - PDF parser extracts content from ObjStm-compressed objects in PDF 1.5+ files correctly (index offset and whitespace handling).
