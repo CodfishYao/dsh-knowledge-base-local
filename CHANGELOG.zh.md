@@ -5,8 +5,6 @@
 
 简体中文 | [English](CHANGELOG.md)
 
-## [未发布]
-
 ## [1.2.4] - 2026-10-18
 
 ### 变更
@@ -62,11 +60,3 @@
 ### 新增
 - Markdown 为源的本地库、六件 Agent 工具、独立 CLI、Web 设置面板、BM25 + 向量混合检索、三档向量模式、集合、标签、回收站、版本、inbox 监听和 URL 导入。
 
-[未发布]: https://github.com/CodfishYao/dsh-knowledge-base-local/compare/v1.2.4...HEAD
-[1.2.4]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.4
-[1.2.3]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.3
-[1.2.2]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.2
-[1.2.1]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.1
-[1.2.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.2.0
-[1.1.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.1.0
-[1.0.0]: https://github.com/CodfishYao/dsh-knowledge-base-local/releases/tag/v1.0.0
