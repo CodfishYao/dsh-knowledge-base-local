@@ -657,11 +657,14 @@ function expandObjectStreams(doc) {
       addWarning(doc, `对象流 ${containerNum} 的 /N /First 无效，已跳过`)
       continue
     }
-    const sc = new Scanner(data, first)
+    // Object numbers and byte offsets live at the head of the stream data
+    // (offset 0); /First marks only where the object bodies begin (ISO 32000-1 §7.5.7).
+    const sc = new Scanner(data, 0)
     const indexes = []
     for (let i = 0; i < count; i++) {
       sc.skipSpace()
       const num = readNumberToken(sc)
+      sc.skipSpace()
       const off = readNumberToken(sc)
       if (num === null || off === null) break
       indexes.push([num, off])

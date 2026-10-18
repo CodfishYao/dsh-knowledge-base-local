@@ -6,7 +6,7 @@
  *   node test/extract.test.mjs
  */
 import assert from 'node:assert/strict'
-import { deflateRawSync } from 'node:zlib'
+import { deflateRawSync, deflateSync } from 'node:zlib'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -168,6 +168,66 @@ function pdfFixture() {
   return Buffer.from(out, 'binary')
 }
 
+/**
+ * PDF 1.7 using a cross-reference STREAM and an object stream (ObjStm) — the
+ * structure IEEE papers ship with. The catalog/pages/page dicts live compressed
+ * inside the ObjStm; only the content stream, font, ObjStm and xref stream are
+ * plain objects. Regression guard: an earlier parser read the ObjStm index from
+ * /First (and without skipping the spaces between pairs) and silently lost all
+ * compressed objects, so every page rendered empty.
+ */
+function objStmPdfFixture() {
+  const content = 'BT\n/F1 12 Tf\n72 720 Td\n(OBJSTM PAGE TEXT) Tj\nET\n'
+  const obj1 = `<< /Length ${content.length} >>\nstream\n${content}endstream`
+  const obj2 = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'
+
+  // Objects 3, 5 and 7 live inside the object stream (number 6).
+  const bodies = [
+    '<< /Type /Catalog /Pages 5 0 R >>',
+    '<< /Type /Pages /Kids [7 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 5 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 2 0 R >> >> /Contents 1 0 R >>',
+  ]
+  let index = ''
+  let offset = 0
+  for (const [pos, body] of bodies.entries()) {
+    const num = [3, 5, 7][pos]
+    index += `${num} ${offset} `
+    offset += body.length
+  }
+  const stmData = Buffer.from(index + bodies.join(''), 'binary')
+  const stmCompressed = deflateSync(stmData)
+  const obj6 = `<< /Type /ObjStm /N 3 /First ${index.length} /Length ${stmCompressed.length} /Filter /FlateDecode >>\nstream\n${stmCompressed.toString('binary')}endstream`
+
+  let out = '%PDF-1.7\n%\xe2\xe3\xcf\xd3\n'
+  const off = {}
+  off[1] = out.length
+  out += `1 0 obj\n${obj1}\nendobj\n`
+  off[2] = out.length
+  out += `2 0 obj\n${obj2}\nendobj\n`
+  off[6] = out.length
+  out += `6 0 obj\n${obj6}\nendobj\n`
+
+  // Cross-reference stream: 9 rows of W=[1 2 1] (type, field2, field3).
+  const row = (type, f2, f3) => Buffer.from([type, (f2 >> 8) & 0xff, f2 & 0xff, f3])
+  const rows = Buffer.concat([
+    row(0, 0, 255), // 0 free
+    row(1, off[1], 0), // 1 content stream
+    row(1, off[2], 0), // 2 font
+    row(2, 6, 0), // 3 catalog  -> ObjStm 6, index 0
+    row(0, 0, 255), // 4 unused/free
+    row(2, 6, 1), // 5 pages    -> ObjStm 6, index 1
+    row(1, off[6], 0), // 6 the object stream itself
+    row(2, 6, 2), // 7 page     -> ObjStm 6, index 2
+    // 8 = this xref stream; its own offset is patched below
+  ])
+  off[8] = out.length
+  const xrefDict = `<< /Type /XRef /Size 9 /W [1 2 1] /Root 3 0 R /Filter /FlateDecode /Length`
+  const xrefCompressed = deflateSync(Buffer.concat([rows, row(1, off[8], 0)]))
+  out += `8 0 obj\n${xrefDict} ${xrefCompressed.length} >>\nstream\n${xrefCompressed.toString('binary')}endstream\n`
+  out += `startxref\n${off[8]}\n%%EOF\n`
+  return Buffer.from(out, 'binary')
+}
+
 async function main() {
   const dir = await mkdtemp(join(tmpdir(), 'kb-extract-'))
   let passed = 0
@@ -244,6 +304,16 @@ async function main() {
     assert.equal(pdf.pages, 2, `pages=${pdf.pages}`)
     assert.ok(pdf.title.includes('PDF') || pdf.title.includes('测试'), `title=${pdf.title}`)
     ok(`pdf 简单字体 + CID/ToUnicode（pages=${pdf.pages}, warnings=${pdf.warnings.length}）`)
+
+    // ---- pdf 1.7 with cross-reference stream + ObjStm compressed objects ----
+    const stmPath = join(dir, 'objstm.pdf')
+    await writeFile(stmPath, objStmPdfFixture())
+    const stm = await extractDocumentText(stmPath)
+    assert.equal(stm.ok, true, stm.error)
+    assert.equal(stm.pages, 1, `pages=${stm.pages}`)
+    assert.match(stm.text, /OBJSTM PAGE TEXT/, '压缩在 ObjStm 里的页面必须能渲染')
+    assert.equal(stm.warnings.filter((w) => w.includes('未能解析')).length, 0, JSON.stringify(stm.warnings))
+    ok('pdf 交叉引用流 + ObjStm 压缩对象（目录/页面树都能解析）')
 
     // ---- error branches ----
     const oleBuf = Buffer.alloc(512)

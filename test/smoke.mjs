@@ -254,6 +254,29 @@ async function main() {
     await new Promise((resolve) => compatServer.close(resolve))
   }
 
+  // ---- 429 retry: transient rate limit must retry, then succeed ----
+  let rateAttempts = 0
+  const rateServer = createServer((req, res) => {
+    rateAttempts++
+    if (rateAttempts === 1) {
+      res.writeHead(429, { 'content-type': 'application/json', 'retry-after': '1' })
+      res.end(JSON.stringify({ error: { message: 'Allocated quota exceeded' } }))
+      return
+    }
+    res.writeHead(200, { 'content-type': 'application/json' })
+    res.end(JSON.stringify({ data: [{ index: 0, embedding: Array(8).fill(0.25) }] }))
+  })
+  await new Promise((resolve) => rateServer.listen(0, '127.0.0.1', resolve))
+  try {
+    const endpoint = `http://127.0.0.1:${rateServer.address().port}/v1`
+    const apiSettings = normalizeSettings({ ...settings, embedding: { endpoint, model: 'mock', apiKey: '' } })
+    const embedded = await embedWithApi(['retry me'], apiSettings)
+    assert.equal(embedded.vectors.length, 1)
+    assert.ok(rateAttempts >= 2, '429 之后必须重试')
+  } finally {
+    await new Promise((resolve) => rateServer.close(resolve))
+  }
+
   await rm(home, { recursive: true, force: true })
   console.log('smoke: ok')
 }

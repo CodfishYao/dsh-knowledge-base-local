@@ -114,6 +114,31 @@ export function parseJsonLoose(text) {
   return null
 }
 
+const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504])
+
+/**
+ * fetch with bounded retries for rate limits and transient failures. Respects
+ * a numeric Retry-After header; otherwise backs off 4s then 10s. Gives up
+ * quickly on persistent 429s (quota), which the caller then reports as a
+ * fallback rather than blocking a whole reindex run.
+ */
+async function fetchWithBackoff(url, init, { signal, timeoutMs } = {}) {
+  const waits = [0, 4000, 10000]
+  let lastResponse = null
+  for (let attempt = 0; attempt < waits.length; attempt++) {
+    if (signal?.aborted) throw new Error('请求已取消')
+    const response = await fetch(url, { ...init, signal: signalWithTimeout(signal, timeoutMs) })
+    if (response.ok || !RETRYABLE_STATUS.has(response.status)) return response
+    lastResponse = response
+    await response.text().catch(() => {})
+    if (attempt === waits.length - 1) break
+    const retryAfter = Number(response.headers.get('retry-after'))
+    const wait = Number.isFinite(retryAfter) && retryAfter > 0 && retryAfter <= 60 ? retryAfter * 1000 : waits[attempt + 1]
+    await new Promise((resolve) => setTimeout(resolve, wait))
+  }
+  return lastResponse
+}
+
 /** OpenAI-compatible embeddings. Returns {vectors, dim, model}. */
 export async function embedWithApi(texts, settings, signal) {
   const conf = settings.embedding
@@ -169,12 +194,11 @@ export async function embedWithApi(texts, settings, signal) {
     }
     const headers = { 'content-type': 'application/json' }
     if (apiKey) headers.authorization = `Bearer ${apiKey}`
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(payload),
-      signal: signalWithTimeout(signal, conf.timeoutMs),
-    })
+    const response = await fetchWithBackoff(
+      url,
+      { method: 'POST', headers, body: JSON.stringify(payload) },
+      { signal, timeoutMs: conf.timeoutMs },
+    )
     if (!response.ok) {
       const detail = truncate(await response.text().catch(() => ''), 300)
       throw new Error(`embeddings endpoint returned HTTP ${response.status}: ${detail}`)

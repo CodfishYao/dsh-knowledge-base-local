@@ -36,7 +36,10 @@ export const DEFAULT_SETTINGS = {
     /** Wire format: '' = infer from the endpoint, 'openai' or 'dashscope' to force it. */
     format: '',
     dimensions: 0,
-    batchSize: 32,
+    /** 10 is the smallest common ceiling (native DashScope caps batches at 10,
+     *  compatible-mode gateways around 20); raise it only for endpoints you
+     *  know accept more. */
+    batchSize: 10,
     timeoutMs: 60000,
   },
   watch: {
