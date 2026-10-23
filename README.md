@@ -1,5 +1,7 @@
 # dsh-knowledge-base-local
 
+[![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/codfishyao/dsh-knowledge-base-local)
+
 [简体中文](README.zh.md) | English
 
 A local, model-readable knowledge-base plugin for **DeepSeek Harness** (DSH). It stores everything as plain Markdown you can open in any editor, and gives three independent ways in — agent tools, a CLI, and a Web settings panel — plus PDF/Office text extraction, an MCP server for external clients, at-rest AES-256-GCM encryption and role-based multi-user access.
