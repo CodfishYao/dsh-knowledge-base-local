@@ -1,5 +1,7 @@
 # dsh-knowledge-base-local
 
+[![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/codfishyao/dsh-knowledge-base-local)
+
 简体中文 | [English](README.md)
 
 一个 DeepSeek Harness（DSH）的本地、任何模型都能读的知识库插件。所有内容以纯 Markdown 存储，可以用任意编辑器打开；提供三条互不依赖的入口——Agent 工具、命令行、Web 设置面板——外加 PDF/Office 正文抽取、面向外部客户端的 MCP 服务、静态 AES-256-GCM 加密，以及基于角色的多用户访问控制。
